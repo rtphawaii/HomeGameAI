@@ -603,45 +603,33 @@
         }
       });
     }
-      // ------- Hand panel responsive re-parenting (mobile under board) -------
-(function () {
-  const handPanel          = document.getElementById('hand-panel');
-  const rightCol           = document.getElementById('right-col');
-  const handMobileAnchor   = document.getElementById('hand-mobile-anchor');
-  const mq                 = window.matchMedia('(max-width: 700px)');
+    // ===== Hand panel responsive re-parenting (mobile under board) =====
+    (function () {
+      const handPanel        = document.getElementById('hand-panel');
+      const rightCol         = document.getElementById('right-col');
+      const handMobileAnchor = document.getElementById('hand-mobile-anchor');
+      const mq               = window.matchMedia('(max-width: 768px)');
 
-  if (!handPanel || !rightCol || !handMobileAnchor) return;
+      if (!handPanel || !rightCol || !handMobileAnchor) return;
 
-  // Put the hand panel right after the board on mobile;
-  // put it back at the top of the right column on desktop.
-  function placeHand(e) {
-    const isMobile = e.matches === true;
-    if (isMobile) {
-      // If it's not already under the board, move it there.
-      if (handPanel.previousElementSibling !== handMobileAnchor) {
-        handMobileAnchor.after(handPanel);
+      function placeHand(e) {
+        const isMobile = e.matches === true;
+        if (isMobile) {
+          if (handPanel.parentElement !== handMobileAnchor) {
+            handMobileAnchor.appendChild(handPanel); // <-- put INSIDE the anchor
+          }
+        } else {
+          if (handPanel.parentElement !== rightCol) {
+            rightCol.prepend(handPanel);             // <-- back to desktop slot
+          }
+        }
       }
-    } else {
-      // Put it first in the right column for desktop/tablet.
-      if (rightCol.firstElementChild !== handPanel) {
-        rightCol.prepend(handPanel);
-      }
-    }
-  }
 
-  // Initial placement + react to changes
-  placeHand(mq);
-  // Modern browsers
-  if (mq.addEventListener) {
-    mq.addEventListener('change', placeHand);
-  } else {
-    // Safari <14 fallback
-    mq.addListener(placeHand);
-  }
-
-  // Optional: also fix after orientation changes (some iOS versions)
-  window.addEventListener('orientationchange', () => placeHand(mq));
-})();
+      placeHand(mq);
+      if (mq.addEventListener) mq.addEventListener('change', placeHand);
+      else mq.addListener(placeHand);
+      window.addEventListener('orientationchange', () => placeHand(mq));
+    })();
   </script>
 </body>
 </html>
