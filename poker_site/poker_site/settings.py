@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+# poker_site/settings.py
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv("/srv/homegame/.env")
 
 #get password
 # GATE_PASSWORD = os.getenv("GATE_PASSWORD", "")

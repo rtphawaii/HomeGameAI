@@ -22,6 +22,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 import copy
 from .fold_range import *
+import traceback
 
 def avatar_from_id(pid: str) -> str:
     choices = [f"generic-{i}.svg" for i in range(1, 9)]

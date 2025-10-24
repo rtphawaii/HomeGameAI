@@ -322,41 +322,52 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def get_input(self, user_id, prompt, cancel_event=None):
         await self.send_to_user(user_id, prompt)
-        fut = asyncio.Future()
+        loop = asyncio.get_running_loop()
+        fut = loop.create_future()
         self.state["pending_inputs"][user_id] = fut
-        if cancel_event is None:
-            res = await fut
+
+        try:
+            if cancel_event is None:
+                return await fut
+
+            cancel_task = asyncio.create_task(cancel_event.wait())
+            done, _ = await asyncio.wait({fut, cancel_task}, return_when=asyncio.FIRST_COMPLETED)
+
+            if cancel_task in done and not fut.done():
+                # cancelled before user responded
+                raise asyncio.CancelledError
+            # got a user response
+            return await fut
+        finally:
             self.state["pending_inputs"].pop(user_id, None)
-            return res
-        done, _ = await asyncio.wait({fut, cancel_event.wait()}, return_when=asyncio.FIRST_COMPLETED)
-        self.state["pending_inputs"].pop(user_id, None)
-        if cancel_event.is_set():
-            raise asyncio.CancelledError
-        return fut.result()
 
     async def get_input_all(self, prompt, cancel_event=None):
-        # Arm the future first
-        fut = asyncio.Future()
+        loop = asyncio.get_running_loop()
+        fut = loop.create_future()
         self.state["pending_inputs_all"]["awaiting all"] = fut
 
-        # If the user already pressed the button, consume it now
+        # If a click already happened, consume it immediately
         if self.state.get("queued_start_round"):
             self.state["queued_start_round"] = False
-            fut.set_result("start new round")
+            if not fut.done():
+                fut.set_result("start new round")
 
-        # Now broadcast the prompt (even if fut already resolved; harmless)
+        # Broadcast after arming the future (safe even if fut already resolved)
         await self.broadcast_system(prompt)
 
-        if cancel_event is None:
-            res = await fut
-            self.state["pending_inputs_all"].pop("awaiting all", None)
-            return res
+        try:
+            if cancel_event is None:
+                return await fut
 
-        done, _ = await asyncio.wait({fut, cancel_event.wait()}, return_when=asyncio.FIRST_COMPLETED)
-        self.state["pending_inputs_all"].pop("awaiting all", None)
-        if cancel_event.is_set():
-            raise asyncio.CancelledError
-        return fut.result()
+            cancel_task = asyncio.create_task(cancel_event.wait())
+            done, _ = await asyncio.wait({fut, cancel_task}, return_when=asyncio.FIRST_COMPLETED)
+
+            if cancel_task in done and not fut.done():
+                raise asyncio.CancelledError
+            return await fut
+        finally:
+            self.state["pending_inputs_all"].pop("awaiting all", None)
+
 
 
     #restart room
