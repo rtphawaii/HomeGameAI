@@ -1,0 +1,164 @@
+#UPDATES AND FIXES NEEDED:
+
+#UPDATE 1
+#must fix all-in scenarios where one player is out of balance
+#in an all-in scenario the player without balance is forced to fold if another player bets
+#this is not ideal and instead it should skip their action, carve out a side pot, and let the action carry on for other players
+
+#UPDATE 2 - Done
+# need to deduct small and big blinds from players
+
+#UPDATE 3 - Done
+# need to fix order updating for new rounds
+
+#UPDATE 4A - Done
+# need to fix current bet and hand score
+
+#UPDATE 4B
+# need to fix subtraction of blinds at start of round from player balances
+
+#UPDATE 4C - Done
+# need to reset universal bet box each betting round
+
+#UPDATE 4D - Done
+# fix evaluation, pot is not awarded to the winner and the player balances arent working
+
+#UPDATE 5
+# need to notify small and big blinds that they are already in for their blinds
+
+#UPDATE 6 
+# need to deploy to a hosted website using AWS EC2
+
+#UPDATE 7 
+# does not work with only 2 players 
+
+#UPDATE 8 - Done
+# New betting box that tracks current bets
+
+#UPDATE 9 - Done
+# Cards stored in static/cards/ now render on the board and in the players hand
+
+#UPDATE 10 - Done
+# Button for adding to player balance, update balance after
+
+#UPDATE 11 - Done
+# Pot live update while players are betting - pot calc and pot update when call or raise 
+
+#UPDATE 11B - Done
+# Fixed folding action where players receive pot twice after everyone folds
+
+#UPDATE 11C - Done
+# Fixed start new round function where betting wasn't working
+
+#UPDATE 12 - Done
+# Make the chat button press by pressing enter key 
+
+#UPDATE 13 - Done
+# Make game rooms for each websocket 
+
+#UPDATE 13B - Done
+# Make it mobile friendly using @media, vertical stack and anchor restart button to bottom
+
+#UPDATE 13C - Done
+# Can now play with two players, added position() function and modified preflop Round() and bets() 
+
+#Update 13D - Done
+# fixed mobile and desktop add balance issues
+
+#UPDATE 13E - Done
+# add message for when player raises
+# remove redundant system messages, removed pot update messages, removed 'now dealing' (flop, turn, river) 
+
+#UPDATE 13F - Done
+# all-in button
+# PROGRESS -> the game is broken and not letting the initial bidding take place. After dealing cards the game fails.
+# PROGRESS 2 -> seems to be working locally, try to deploy and test
+# PROGRESS 3 -> needs testing, partially works
+# PROGRESS 3 -> breaks when a short stacked player goes all-in and the bigger stack player subsequently goes all-in
+# BACKUP -> Google Drive HomeGame 5.3 
+
+#UPDATE 13G - Done
+# fix raise loop where raiser gets action again
+
+#UPDATE 13H - Done
+# fix add balance glitch where when one player adds balance another cannot afterward. Everything seems to be working.
+
+#UPDATE 13J - Done
+# fix desktop all-in button and mobile layout
+
+#UPDATE 14 - Done
+# all-in big stack over short stack broken again
+
+#UPDATE 15 - Done
+# big stack goes all-in and short stack can continue betting portions of stack instead of going all-in
+# PROGRESS: The big stack does have a cap when they go all-in now but other things broke. now when the big stack goes all-in and short stack is forced to go all-in no matter what they send, they cant fold either. Even if the short stack bets 5 it goes to an all-in. instead it should be an error message or something and require them to either enter the amount of their whole stack or use the all-in button. When someone goes all-in and it is two players, it automatically makes the other person go all-in as well.
+# all all-in scenarios seem to work
+
+#UPDATE 16 - Need
+# When players bust it is still possible to start another round and they are included in the round
+# right now they need to either buy back in before start new round or the game will break
+# so if someone busts they need to buy back in or a new room needs to be created and game start from scratch
+
+#UPDATE 17 - Done
+# cleaned up code a little, removed functions that arent being used or commented out like bets() and evaluate_original()
+
+#UPDATE 18 - Done
+# call to api for LLM works remember when sending summary and hint, asyncio.create_task() so it doesnt stop everything
+# need to build ledger for storing game play
+
+#UPDATE 19 - Done
+# created a private and public ledger that allow Grok 4 fast to receive player specific game logs and give hints during the players turn
+# also there is a game summary at the end of each round, including if everyone folds
+
+#UPDATE 20 - Done
+# The private ledger actually wasnt working but now it is, the hints are two sentences and solid
+
+#UPDATE 21 - Done
+# added lots of code for ai agent, not working but makes it until betting
+# LLM Agent cpu player can now play against one single player, need optimization changes, right now it receives the entire private ledger and is slow and expensive
+
+#UPDATE 22 - Done
+# Private Ledger is too big, need to send only relevant information
+# Send only round/hand information - each round costs $0.03
+
+#UPDATE 23 - Done
+# When the LLM bot is trying to go all-in it doesnt work
+
+#UPDATE 24 - Done
+# When the round goes to the river, start new round is not prompted afterward
+# this was a bug within the end of Round() where sending info that was not there, fixed by adding try block
+
+#UPDATE 25 - Done
+# updated styles.css with animations and nicer font and buttons and box layout
+
+#UPDATE 26 - Need
+# Simple decisions (fold obvious trash) → Rule-based (instant)
+# Standard plays (pot odds, equity) → Traditional poker solver (fast)
+# Complex spots (multi-way, ICM, opponent reads) → LLM (slower but smart)
+
+#UPDATE 27 - NEED
+# LLM bot still pretty slow, need to think of ways to speed it up
+
+#Update 28 - Done
+# The LLM actually bluffs sometimes in good spots, very cool
+
+#UPDATE 29 - Done
+# The LLM slightly negative edge doesnt work
+
+#UPDATE 30 - Done
+# CPU's villain raise to 0.3 preflop does not work
+# Now when not facing a bet, holding trip aces edge is 0.9 and raise happens automatically to 0.75*pot
+
+#UPDATE 31 - Done
+# add button for start new round, add box with players in order and their balances
+
+#UPDATE 32 - Done
+# fixed ledger event, now the summary includes hands of players
+# Use deepseek for the less crucial decisions, its way faster
+# grok is way better at hints and summary and also good for the critical parts of hands
+
+#UPDATE 33 - Done
+# Added player box with play order and indicator and balances and positions
+
+#UPDATE XX - Done
+# For each time you send or maybe receive add to a game ledger, feed the entire ledger joined with separators to an open ai api and spit back a summary of the game play

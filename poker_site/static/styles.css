@@ -1,0 +1,939 @@
+/* =========================
+   Light Minimal Theme with Animations
+   ========================= */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --surface-1: #f5f5f5;
+  --surface-2: #e0e0e0;
+  --border-color: #cccccc;
+  --accent: #333333;
+  --accent-light: #9f9e9e;
+  --accent-warm: #6b6b6b;
+  --shadow-accent: rgba(0,0,0,.12);
+  --shadow-accent-warm: rgba(0,0,0,.18);
+  --inverse-text-color: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+input, button, textarea, select { 
+  font-size: 16px !important; 
+}
+
+/* =========================
+   Base Layout
+   ========================= */
+body {
+  background-color: var(--bg-color);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.site-header { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 24px 0 16px;
+  margin-bottom: 20px;
+}
+
+.logo { 
+  width: clamp(100px, 18vw, 160px);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+/* =========================
+   HUD Row (Pot/Bet)
+   ========================= */
+.hud-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  width: 90%;
+  max-width: 600px;
+  margin-bottom: 24px;
+}
+
+#pot-display,
+#bet-display {
+  flex: 1;
+  background-color: var(--surface-2);
+  border: 1px solid var(--accent-warm);
+  color: var(--text-color);
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.1em;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 8px var(--shadow-accent-warm);
+  transition: all 0.3s ease;
+}
+
+#pot-display:hover,
+#bet-display:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-accent-warm);
+}
+
+/* =========================
+   Board Display
+   ========================= */
+#board-display {
+  background-color: var(--surface-2);
+  border: 1px solid var(--accent);
+  color: var(--text-color);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-weight: 600;
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+  font-size: 1.05em;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 8px var(--shadow-accent);
+}
+
+.board-cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+#board-display .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+#board-display .card:hover {
+  transform: translateY(-8px);
+}
+
+.card-img {
+  height: 100px;
+  aspect-ratio: 5 / 7;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  transition: all 0.3s ease;
+}
+
+.card-caption {
+  margin-top: 8px;
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+.card-fallback {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px dashed var(--accent);
+  border-radius: 6px;
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+/* =========================
+   Container Layout
+   ========================= */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 80px;
+}
+
+/* =========================
+   Chat Section
+   ========================= */
+#chat-section {
+  flex: 1;
+  max-width: 600px;
+}
+
+#chat-log {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  height: 320px;
+  overflow-y: auto;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+#chat-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat-log::-webkit-scrollbar-track {
+  background: var(--surface-2);
+  border-radius: 4px;
+}
+
+#chat-log::-webkit-scrollbar-thumb {
+  background: var(--accent-light);
+  border-radius: 4px;
+}
+
+#chat-log div {
+  background-color: var(--surface-2);
+  margin: 8px 0;
+  padding: 12px;
+  border-left: 4px solid var(--accent);
+  border-radius: 5px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.chat-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#chat-message-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px;
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+#chat-message-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1);
+}
+
+#send {
+  background-color: var(--accent-light);
+  color: var(--inverse-text-color);
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#send:hover {
+  background-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-accent);
+}
+
+#send:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   All-In Button
+   ========================= */
+#all-in-btn {
+  background-color: #ff5252 !important;
+  color: #fff !important;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+#all-in-btn:hover:not(:disabled) {
+  background-color: #ff3030 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 82, 82, 0.4);
+}
+
+#all-in-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+#all-in-btn:disabled {
+  background-color: #999 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#all-in-btn.your-turn {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+  }
+}
+
+/* =========================
+   Right Column
+   ========================= */
+#right-col {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.panel:hover {
+  box-shadow: 0 4px 12px var(--shadow-accent);
+}
+
+.panel h3 {
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+/* =========================
+   Hand Display
+   ========================= */
+#hand-panel {
+  min-height: 140px;
+}
+
+.hand-cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+#hand-display .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+#hand-display .card:hover {
+  transform: translateY(-12px) scale(1.05);
+}
+
+#hand-display .card-img {
+  height: 100px;
+  aspect-ratio: 5 / 7;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+/* =========================
+   Player Info
+   ========================= */
+#player-info {
+  height: auto;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+#player-info::-webkit-scrollbar {
+  width: 8px;
+}
+
+#player-info::-webkit-scrollbar-track {
+  background: var(--surface-2);
+  border-radius: 4px;
+}
+
+#player-info::-webkit-scrollbar-thumb {
+  background: var(--accent-light);
+  border-radius: 4px;
+}
+
+.player-stat {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.player-stat:hover {
+  background-color: var(--surface-2);
+  padding: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+  border-radius: 6px;
+}
+
+.player-stat:last-child {
+  border-bottom: none;
+}
+
+.player-stat strong {
+  font-weight: 600;
+}
+
+/* =========================
+   Add Balance
+   ========================= */
+.add-balance {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.add-balance label {
+  font-weight: 600;
+}
+
+.add-balance input[type="number"] {
+  max-width: 140px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--surface-1);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.add-balance input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1);
+}
+
+.add-balance button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-2);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.add-balance button:hover {
+  background: var(--accent-light);
+  color: var(--inverse-text-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-accent);
+}
+
+.add-balance button:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   Mobile Responsive
+   ========================= */
+@media (max-width: 700px) {
+  body {
+    padding: 12px;
+    padding-bottom: 100px;
+  }
+
+  .container {
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+  }
+
+  .hud-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  #board-display {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .board-cards,
+  .hand-cards {
+    gap: 8px;
+  }
+
+  .card-img,
+  #hand-display .card-img,
+  #board-display .card-img {
+    height: 80px;
+  }
+
+  #chat-log {
+    height: 240px;
+  }
+
+  .chat-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #chat-message-input {
+    width: 100%;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    resize: none !important;
+  }
+
+  #send,
+  #all-in-btn {
+    width: 100%;
+    padding: 14px;
+  }
+
+  #right-col {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #player-info {
+    max-height: 240px;
+  }
+
+  .add-balance {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-balance input[type="number"],
+  .add-balance button {
+    max-width: 100%;
+    width: 100%;
+  }
+
+
+}
+
+/* =========================
+   iOS Safari Optimization
+   ========================= */
+@supports (-webkit-touch-callout: none) {
+  input, button { 
+    font-size: 16px !important; 
+  }
+  body { 
+    -webkit-text-size-adjust: 100%; 
+  }
+}
+
+/* =========================
+   Utility Classes
+   ========================= */
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===== Action Bar (fixed bottom-left) ===== */
+.action-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  gap: 12px;
+  z-index: 1000;
+}
+
+/* Shared button base */
+.action-bar button {
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, opacity .2s ease;
+}
+
+
+/* Start Round: grey when disabled, green when enabled */
+#start-round-btn[disabled] {
+  background-color: #bdbdbd;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+#start-round-btn:not([disabled]) {
+  background-color: #2bb673; /* green */
+  color: #ffffff;
+}
+#start-round-btn:not([disabled]):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  background-color: #25a367;
+}
+#start-round-btn:not([disabled]):active {
+  transform: translateY(0);
+}
+
+/* Mobile: full-width bar at bottom */
+@media (max-width: 700px) {
+  .action-bar {
+    left: 0; right: 0; bottom: 0;
+    width: 100%;
+    padding: 12px;
+    gap: 10px;
+    justify-content: center;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.03));
+  }
+  .action-bar button {
+    flex: 1 1 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+    border-radius: 10px;
+  }
+}
+
+/* ===== Action Bar (fixed bottom-left) ===== */
+.action-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  gap: 12px;
+  z-index: 1000;
+}
+
+/* Shared button base */
+.action-bar button {
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, opacity .2s ease;
+}
+
+/* Restart: red */
+#restart-btn {
+  background-color: #f04e4e;
+  color: #fff;
+}
+#restart-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.35); background-color: #d93b3b; }
+#restart-btn:active { transform: translateY(0); }
+
+/* Start Round: grey when disabled, green when enabled */
+#start-round-btn[disabled] {
+  background-color: #bdbdbd;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+#start-round-btn:not([disabled]) {
+  background-color: #2bb673; /* green */
+  color: #ffffff;
+}
+#start-round-btn:not([disabled]):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  background-color: #25a367;
+}
+#start-round-btn:not([disabled]):active {
+  transform: translateY(0);
+}
+
+/* Mobile: full-width bar at bottom */
+@media (max-width: 700px) {
+  .action-bar {
+    left: 0; right: 0; bottom: 0;
+    width: 100%;
+    padding: 12px;
+    gap: 10px;
+    justify-content: center;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.03));
+  }
+  .action-bar button {
+    flex: 1 1 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+    border-radius: 10px;
+  }
+}
+
+/* Players strip container */
+.avatar {
+width: 36px;
+height: 36px;
+border-radius: 50%;
+background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+border: 1px solid rgba(255,255,255,0.18);
+display: grid;
+place-items: center;
+font-size: 14px;
+font-weight: 700;
+}
+.avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pos-tag {
+font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+padding: 2px 6px; border-radius: 999px;
+background: rgba(255,255,255,0.10);
+border: 1px solid rgba(255,255,255,0.18);
+}
+
+
+/* Bottom row: balance */
+.player-bottom {
+display: flex; justify-content: space-between; align-items: center; margin-top: 8px;
+}
+.balance { font-variant-numeric: tabular-nums; font-weight: 600; }
+.status-chip {
+font-size: 11px; padding: 2px 6px; border-radius: 999px;
+background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
+}
+
+
+/* Active player card state */
+.player-card.active {
+border-color: rgba(255, 210, 85, 0.95);
+box-shadow: 0 0 0 3px rgba(255,210,85,0.22), 0 10px 20px rgba(0,0,0,0.25);
+}
+
+
+/* Sliding turn indicator “puck” under the cards */
+.turn-indicator {
+position: absolute;
+left: 0; bottom: 6px;
+width: 110px; height: 6px;
+border-radius: 999px;
+background: linear-gradient(90deg, rgba(255,210,85,0.9), rgba(255,120,0,0.9));
+box-shadow: 0 6px 14px rgba(255,180,0,0.35);
+transform: translateX(0);
+transition: transform 240ms ease;
+pointer-events: none;
+}
+
+
+/* Faded when nobody to act */
+.turn-indicator.hidden { opacity: 0; transition: opacity 160ms ease; }
+
+
+/* Better thin scrollbar look */
+.players-strip::-webkit-scrollbar { height: 8px; }
+.players-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
+.players-strip::-webkit-scrollbar-track { background: transparent; }
+
+
+@media (max-width: 520px) {
+.player-card { min-width: 120px; padding: 8px 10px; }
+.turn-indicator { width: 90px; }
+}
+
+/* =========================
+   Players Bar (light theme)
+   ========================= */
+
+/* Container under the board */
+.players-strip {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  padding: 10px 12px 18px; /* extra bottom padding for the puck */
+  margin: 12px auto 24px;
+  background: var(--surface-1);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Single player card */
+.player-card {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 148px;
+  max-width: 200px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  color: var(--text-color);
+}
+.player-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* Top row inside the card */
+.player-top {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Avatar/name/pos adjusted for light theme */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+  border: 1px solid rgba(0,0,0,0.12);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+.avatar img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+}
+.name {
+  font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pos-tag {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  padding: 2px 6px; border-radius: 999px;
+  background: rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.12);
+  color: var(--text-color);
+}
+
+/* Bottom row: balance + status */
+.player-bottom {
+  display: flex; justify-content: space-between; align-items: center; margin-top: 8px;
+}
+.balance { font-variant-numeric: tabular-nums; font-weight: 600; }
+.status-chip {
+  font-size: 11px; padding: 2px 6px; border-radius: 999px;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+/* Active card emphasis */
+.player-card.active {
+  border-color: rgba(255, 170, 0, 0.9);
+  box-shadow: 0 0 0 3px rgba(255,170,0,0.18), 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* Sliding turn indicator (“puck”) */
+.turn-indicator {
+  position: absolute;
+  left: 0; bottom: 6px;
+  width: 110px; height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,190,20,0.95), rgba(255,120,0,0.95));
+  box-shadow: 0 6px 14px rgba(255,180,0,0.35);
+  transform: translateX(0);
+  transition: transform 240ms ease;
+  pointer-events: none;
+}
+.turn-indicator.hidden { opacity: 0; transition: opacity 160ms ease; }
+
+/* Thin horizontal scrollbar on the strip */
+.players-strip::-webkit-scrollbar { height: 8px; }
+.players-strip::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.20); border-radius: 999px; }
+.players-strip::-webkit-scrollbar-track { background: transparent; }
+
+/* Mobile tweaks */
+@media (max-width: 520px) {
+  .players-strip { width: 100%; padding: 8px 10px 16px; }
+  .player-card { min-width: 128px; padding: 8px 10px; }
+  .turn-indicator { width: 90px; }
+}
+
+.avatar {
+  position: relative;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.9em;
+}
+@media (max-width: 700px) {
+  #hand-panel {
+    margin-top: 8px;
+  }
+}

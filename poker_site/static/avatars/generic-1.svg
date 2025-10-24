@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 256 256" role="img" aria-label="map pin">
+  <defs>
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#softShadow)">
+    <!-- Outer pin -->
+    <path d="M128 24c-45 0-82 37-82 82 0 54 82 146 82 146s82-92 82-146c0-45-37-82-82-82z" fill="#1F2937"/>
+    <!-- Accent ring -->
+    <circle cx="128" cy="106" r="50" fill="url(#grad)"/>
+    <!-- Inner cutout -->
+    <circle cx="128" cy="106" r="36" fill="#0B0F14"/>
+  </g>
+</svg>

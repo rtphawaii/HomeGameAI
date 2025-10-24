@@ -1,0 +1,618 @@
+/* =========================
+   Modern Minimal Theme
+   ========================= */
+:root {
+  --bg-primary: #0a0e17;
+  --bg-secondary: #151922;
+  --bg-tertiary: #1e2530;
+  --text-primary: #e4e7eb;
+  --text-secondary: #9ca3af;
+  --accent-primary: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.3);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --card-shadow: rgba(0, 0, 0, 0.4);
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+input, button, textarea, select { 
+  font-size: 16px !important; 
+}
+
+/* =========================
+   Base Layout
+   ========================= */
+body {
+  background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.site-header { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 24px 0 16px;
+  margin-bottom: 20px;
+}
+
+.logo { 
+  width: clamp(100px, 18vw, 160px);
+  filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.3));
+}
+
+/* =========================
+   HUD Row (Pot/Bet)
+   ========================= */
+.hud-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  width: 90%;
+  max-width: 600px;
+  margin-bottom: 24px;
+}
+
+#pot-display,
+#bet-display {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1em;
+  text-align: center;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+#pot-display:hover,
+#bet-display:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   Board Display
+   ========================= */
+#board-display {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.board-cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+#board-display .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+#board-display .card:hover {
+  transform: translateY(-8px);
+}
+
+.card-img {
+  height: 100px;
+  aspect-ratio: 5 / 7;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px var(--card-shadow);
+  transition: all 0.3s ease;
+}
+
+.card-caption {
+  margin-top: 8px;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.card-fallback {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+/* =========================
+   Container Layout
+   ========================= */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 80px;
+}
+
+/* =========================
+   Chat Section
+   ========================= */
+#chat-section {
+  flex: 1;
+  max-width: 600px;
+}
+
+#chat-log {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  height: 320px;
+  overflow-y: auto;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#chat-log::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-log::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+#chat-log::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 3px;
+}
+
+#chat-log div {
+  background: var(--bg-tertiary);
+  margin: 8px 0;
+  padding: 12px 16px;
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 8px;
+  font-size: 0.95em;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.chat-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#chat-message-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+}
+
+#chat-message-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+#send {
+  background: var(--accent-primary);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+#send:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+#send:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   All-In Button
+   ========================= */
+#all-in-btn {
+  background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+#all-in-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+#all-in-btn:disabled {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+#all-in-btn.your-turn {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(239, 68, 68, 0.6);
+  }
+}
+
+/* =========================
+   Right Column
+   ========================= */
+#right-col {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.panel h3 {
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* =========================
+   Hand Display
+   ========================= */
+#hand-panel {
+  min-height: 140px;
+}
+
+.hand-cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+#hand-display .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+#hand-display .card:hover {
+  transform: translateY(-12px) scale(1.05);
+}
+
+#hand-display .card-img {
+  height: 100px;
+  aspect-ratio: 5 / 7;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px var(--card-shadow);
+}
+
+/* =========================
+   Player Info
+   ========================= */
+#player-info {
+  height: auto;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+#player-info::-webkit-scrollbar {
+  width: 6px;
+}
+
+#player-info::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+#player-info::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 3px;
+}
+
+.player-stat {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-stat:last-child {
+  border-bottom: none;
+}
+
+.player-stat strong {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+/* =========================
+   Add Balance
+   ========================= */
+.add-balance {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.add-balance label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.95em;
+}
+
+.add-balance input[type="number"] {
+  max-width: 140px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.add-balance input[type="number"]:focus {
+  outline: none;
+  border-color: var(--success);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.add-balance button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--success);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.add-balance button:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* =========================
+   Restart Button
+   ========================= */
+#restart-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  z-index: 1000;
+}
+
+#restart-btn:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+}
+
+#restart-btn:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   Mobile Responsive
+   ========================= */
+@media (max-width: 700px) {
+  body {
+    padding: 12px;
+    padding-bottom: 100px;
+  }
+
+  .container {
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+  }
+
+  .hud-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  #board-display {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .board-cards,
+  .hand-cards {
+    gap: 8px;
+  }
+
+  .card-img,
+  #hand-display .card-img,
+  #board-display .card-img {
+    height: 80px;
+  }
+
+  #chat-log {
+    height: 240px;
+  }
+
+  .chat-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #chat-message-input {
+    width: 100%;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    resize: none !important;
+  }
+
+  #send,
+  #all-in-btn {
+    width: 100%;
+    padding: 14px;
+  }
+
+  #right-col {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #player-info {
+    max-height: 240px;
+  }
+
+  .add-balance {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-balance input[type="number"],
+  .add-balance button {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  #restart-btn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    padding: 18px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* =========================
+   iOS Safari Optimization
+   ========================= */
+@supports (-webkit-touch-callout: none) {
+  input, button { 
+    font-size: 16px !important; 
+  }
+  body { 
+    -webkit-text-size-adjust: 100%; 
+  }
+}
+
+/* =========================
+   Utility Classes
+   ========================= */
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}

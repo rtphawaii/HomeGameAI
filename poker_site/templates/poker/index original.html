@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HomeGame</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e6edf3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            width: 90%;
+        }
+
+        #chat-section, #player-info {
+            flex: 1;
+        }
+
+        h2 {
+            color: #c792ea;
+            margin-bottom: 15px;
+        }
+
+        #pot-display {
+            background-color: #21262d;
+            border: 1px solid #f78c6c; /* Soft orange accent */
+            color: #e6edf3;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            width: 80%;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 8px rgba(247, 140, 108, 0.15);
+        }
+
+        #board-display {
+            background-color: #21262d;
+            border: 1px solid #c792ea;
+            color: #e6edf3;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            width: 80%;
+            text-align: center;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 8px rgba(199, 146, 234, 0.15);
+        }
+
+        #chat-log {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            height: 320px;
+            overflow-y: auto;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        #chat-log div {
+            background-color: #21262d;
+            margin: 6px 0;
+            padding: 10px;
+            border-left: 4px solid #c792ea;
+            border-radius: 5px;
+        }
+
+        #chat-message-input {
+            width: 70%;
+            padding: 10px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+        }
+
+        #send {
+            background-color: #c792ea;
+            color: #0d1117;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        #player-info {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 15px;
+            height: 320px;
+            overflow-y: auto;
+        }
+
+        .player-stat {
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #30363d;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>♠ HomeGame Poker ♣</h2>
+
+     <!-- board box -->
+     <div id="board-display">
+        Board: (Waiting for cards...)
+    </div>
+    <!-- pot display -->
+    <div id="pot-display">
+        Pot: $0
+    </div>
+    <!-- chat box and player info -->
+    <div class="container">
+        <div id="chat-section">
+            <div id="chat-log"></div>
+            <input id="chat-message-input" type="text" placeholder="Type your move..." />
+            <button id="send">Send</button>
+        </div>
+        <div id="player-info">
+            <h3>Player Info</h3>
+            <div id="player-stats"></div>
+        </div>
+    </div>
+
+    <script>
+        const userId = '{{ user_id }}';
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/chat/?user_id=' + userId
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log("Received:", data); // ✅ this should print full data
+
+            // If it's a chat message
+            if (data.message) {
+                const chatLog = document.getElementById('chat-log');
+                const msg = document.createElement('div');
+                msg.textContent = data.message;
+                chatLog.appendChild(msg);
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }
+
+            // If it's a player update
+            if (data.player) {
+                console.log("Player update received ✅", data.player); // debug
+                updatePlayerStats(data.player);
+            }
+            // board updates
+            if (data.board) {
+                console.log("Board update received ✅", data.board.board);
+                document.getElementById('board-display').textContent = `Board: ${data.board.board}`;
+            }
+            // pot updates
+            if (data.pot) {
+            console.log("Pot update received ✅", data.pot.pot);
+            document.getElementById('pot-display').textContent = `Pot: $${data.pot.pot}`;
+        }
+        };
+
+        document.getElementById('send').onclick = function () {
+            const messageInputDom = document.getElementById('chat-message-input');
+            const message = messageInputDom.value;
+            if (chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({ 'message': message }));
+            }
+            messageInputDom.value = '';
+        };
+
+        function updatePlayerStats(player) {
+            const stats = document.getElementById('player-stats');
+            stats.innerHTML = `
+                <div class="player-stat"><strong>Name:</strong> ${player.name}</div>
+                <div class="player-stat"><strong>Balance:</strong> $${player.balance}</div>
+                <div class="player-stat"><strong>Current Bet:</strong> $${player.currentbet}</div>
+                <div class="player-stat"><strong>Hand Score:</strong> ${player.handscore}</div>
+                <div class="player-stat"><strong>Hand:</strong> ${player.hand.map(card => card[0] + card[1]).join(', ')}</div>
+            `;
+        }
+    </script>
+</body>
+</html>

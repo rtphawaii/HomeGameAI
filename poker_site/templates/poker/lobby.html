@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HomeGame • Lobby</title>
+  <link rel="icon" href="{% static 'images/homegamelogo.png' %}">
+  <style>
+    :root {
+      --bg: #0d0d0d;         /* deep black */
+      --panel: #1a1a1a;      /* dark grey panel */
+      --text: #f5f5f5;       /* near white text */
+      --muted: #b0b0b0;      /* softer grey text */
+      --border: #2b2b2b;     /* subtle border grey */
+      --accent: #ffffff;     /* white accents */
+      --shadow: rgba(0,0,0,0.5);
+      --logo-bg: #e6e6e6;    /* light grey for logo area */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      width: min(420px, 90%);
+      text-align: center;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+
+    .logo-box {
+      background: var(--logo-bg);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .logo {
+      width: 110px;
+      height: auto;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+    }
+
+    p.sub {
+      color: var(--muted);
+      font-size: 0.9em;
+      margin-bottom: 24px;
+    }
+
+    code {
+      background: #2a2a2a;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    input {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #121212;
+      color: var(--text);
+      font-size: 1em;
+      text-align: center;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+    }
+
+    button {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background: #e0e0e0;
+      transform: translateY(-1px);
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.85em;
+      color: var(--muted);
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .seg {
+    display: inline-grid;
+    grid-auto-flow: column;
+    gap: 6px;
+    background: #121212;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px;
+    justify-content: center;
+    margin-top: 6px;
+  }
+
+  .seg input { display: none; }
+
+  .seg label {
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--muted);
+    border: 1px solid transparent;
+  }
+
+  .seg input:checked + label {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="logo-box">
+      <img src="{% static 'images/homegamelogo.png' %}" alt="HomeGame Logo" class="logo" />
+    </div>
+    <h1>HomeGame Lobby</h1>
+    <p class="sub">Join or create a poker room to play with friends</p>
+
+    <p>Your ID: <code>{{ user_id }}</code></p>
+
+    <form onsubmit="go(event)">
+          <div class="seg">
+      <input type="radio" id="type-human" name="roomtype" value="human" checked>
+      <label for="type-human">Human</label>
+
+      <input type="radio" id="type-cpu" name="roomtype" value="cpu">
+      <label for="type-cpu">Against CPU</label>
+    </div>
+
+      <input id="room" placeholder="Room name (e.g., table-1)" required />
+      <button type="submit">Join / Create</button>
+
+    </form>
+
+    <div class="footer">
+      <p>Tip: Share your room URL with friends to invite them.</p>
+    </div>
+
+  </main>
+
+  <script>
+  function slugify(s) {
+    return s
+      .toLowerCase()
+      .trim()
+      .replace(/[\s_]+/g, '-')      // spaces/underscores → dash
+      .replace(/[^a-z0-9-]/g, '')   // keep a-z, 0-9, dash
+      .replace(/-+/g, '-')          // collapse repeats
+      .replace(/^-|-$/g, '');       // trim leading/trailing dash
+  }
+
+  function go(e) {
+    e.preventDefault();
+    const raw = document.getElementById('room').value;
+    const room = slugify(raw);
+    if (!room) return;
+
+    const type = document.querySelector('input[name="roomtype"]:checked')?.value || 'human';
+    const path = (type === 'cpu')
+      ? `/room/cpu/${encodeURIComponent(room)}/`
+      : `/room/${encodeURIComponent(room)}/`;
+
+    window.location.href = path;
+  }
+  </script>
+</body>
+</html>

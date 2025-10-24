@@ -1,0 +1,470 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HomeGame</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+    <header class="site-header">
+        <img
+        class="logo"
+        src="{% static 'images/homegamelogo.png' %}"
+        alt="HomeGame Poker"
+        width="320"
+        height="auto"
+        decoding="async"
+        fetchpriority="high"
+        />
+    </header>
+
+    <!-- board box -->
+    <div id="board-display">
+        Board: (Waiting for cards...)
+    </div>
+    
+    <!-- pot and bet -->
+    <div class="hud-row">
+    <div id="pot-display">Pot: $0</div>
+    <div id="bet-display">Bet: $0</div>
+    </div>
+
+    <!-- chat box and player info -->
+    <div class="container">
+    <div id="chat-section">
+        <div id="chat-log"></div>
+
+        <!-- ONE set of controls -->
+        <div class="chat-controls">
+        <input id="chat-message-input" type="text" placeholder="Type your move..." />
+        <button id="send">Send</button>
+
+        <!-- MODIFIED FOR ALL-IN -->
+        <button id="all-in-btn" disabled>All-In</button>
+        </div>
+    </div>
+
+
+    <!-- right column stacks Hand (boxed) ABOVE Player Info -->
+        <div id="right-col">
+        <section id="hand-panel" class="panel" aria-live="polite" aria-label="Player Hand">
+            <div id="hand-display"></div>
+        </section>
+
+        <section id="player-info" class="panel">
+            <h3>Player Info</h3>
+            <div id="player-stats"></div>
+        </section>
+
+        <!-- Move this OUTSIDE of player-info -->
+        <div id="add-balance" class="add-balance panel">
+        <label for="amount-input">Add Balance ($):</label>
+        <input id="amount-input" type="number" min="0.01" step="0.01" placeholder="e.g. 10.00" />
+        <button id="add-btn" type="button">Add</button>
+        </div>
+    </div>
+  </div>
+
+  <!-- Action bar with left-aligned Restart -->
+  <div class="action-bar">
+    <button id="restart-btn">Restart Game</button>
+      <button id="start-round-btn" type="button" aria-label="Start New Round" disabled>
+    Start New Round
+  </button>
+  </div>
+
+<script>
+  const baseUserId = '{{ user_id }}';
+  const roomName   = '{{ room_name }}';
+
+  // Unique per tab
+  const rnd = (crypto?.getRandomValues
+      ? crypto.getRandomValues(new Uint32Array(1))[0].toString(36)
+      : Math.random().toString(36).slice(2));
+  const userId = `${baseUserId}-${rnd}`;
+  console.log("Full userId this tab:", userId);
+
+  // ------- UI helpers -------
+  function setMyTurn(isMyTurn) {
+    const allInBtn = document.getElementById("all-in-btn");
+    if (!allInBtn) return;
+    allInBtn.disabled = !isMyTurn;
+    allInBtn.style.opacity = isMyTurn ? "1" : "0.6";
+  }
+
+  // Start New Round button toggle
+  const startBtn = document.getElementById("start-round-btn");
+  function setStartRoundReady(ready) {
+    if (!startBtn) return;
+    startBtn.disabled = !ready; // enabled (green) when ready==true, grey/disabled otherwise
+  }
+
+  // ------- Socket message handler -------
+  function handleSocketMessage(data) {
+    console.log("Received:", data);
+
+    // Debug
+    if (data?.debug_user_id) {
+      console.log("[DEBUG] server sees me as:", data.debug_user_id);
+    }
+
+    // Turn control (All-In button)
+    if (data?.action === "your_turn") {
+      const btn = document.getElementById("all-in-btn");
+      if (btn) btn.disabled = false;
+    }
+    if (data?.action === "turn_end") {
+      const btn = document.getElementById("all-in-btn");
+      if (btn) btn.disabled = true;
+    }
+
+    // ---- Start New Round button cues ----
+    // Enable when server prompts / hand over; disable when round actually starts.
+    if (
+      data?.action === "start_round_prompt" ||
+      data?.can_start_new_round === true ||
+      data?.next_round_ready === true ||
+      data?.action === "hand_over"
+    ) {
+      setStartRoundReady(true);
+    }
+    if (data?.action === "round_started" || data?.round === 1) {
+      setStartRoundReady(false);
+    }
+
+    // Hard reset from server
+    if (data?.reset) {
+      document.getElementById('board-display').textContent = 'Board: (Waiting for cards...)';
+      document.getElementById('pot-display').textContent   = 'Pot: $0';
+      document.getElementById('bet-display').textContent   = 'Bet: $0';
+      document.getElementById('hand-display').innerHTML    = '';
+      document.getElementById('player-stats').innerHTML    = '';
+      return;
+    }
+
+    // Chat message
+    if (data?.message) {
+      const chatLog = document.getElementById('chat-log');
+      const msg = document.createElement('div');
+      msg.textContent = data.message;
+      chatLog.appendChild(msg);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    // Player update
+    if (data?.player) {
+      updatePlayerStats(data.player);
+      if (data.player.hand) renderHand(data.player.hand);
+    }
+
+    // Board updates
+    if (data?.board) {
+      if (data.board.clear) {
+        const el = document.getElementById('board-display');
+        el.textContent = 'Board: (Waiting for cards...)';
+      } else if (data.board.board) {
+        renderBoard(data.board.board);
+      }
+    }
+
+    // Pot & Bet updates
+    if (data?.pot) {
+      document.getElementById('pot-display').textContent = `Pot: $${data.pot.pot}`;
+    }
+    if (data?.bet) {
+      document.getElementById('bet-display').textContent = `Bet: $${data.bet.amount}`;
+    }
+
+    // Redundant safety for All-In button via action
+    if (data?.action === "your_turn") {
+      document.getElementById("all-in-btn")?.removeAttribute("disabled");
+    }
+    if (data?.action === "turn_end") {
+      document.getElementById("all-in-btn")?.setAttribute("disabled", "true");
+    }
+    if (data?.action === 'hand_over') {
+      document.getElementById('all-in-btn')?.removeAttribute('disabled');
+    }
+  }
+
+  // ------- Create Socket -------
+  function createSocket() {
+    const socket = new WebSocket(
+      (location.protocol === 'https:' ? 'wss://' : 'ws://') +
+      location.host + '/ws/chat/' + encodeURIComponent(roomName) +
+      '/?user_id=' + encodeURIComponent(userId)
+    );
+
+    socket.onopen = () => {
+      console.log('[WS] Connected ✅');
+      const chatLog = document.getElementById('chat-log');
+      if (chatLog) {
+        const msg = document.createElement('div');
+        msg.textContent = '[System] Connected to server ✅';
+        chatLog.appendChild(msg);
+      }
+    };
+
+    socket.onclose = (e) => {
+      console.warn('[WS] Closed. Retrying in 3s...', e?.reason);
+      setTimeout(() => {
+        window.chatSocket = createSocket(); // 🔁 reconnect with GLOBAL
+      }, 3000);
+    };
+
+    socket.onerror = (err) => {
+      console.error('[WS] Error:', err);
+      socket.close();
+    };
+
+    socket.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        handleSocketMessage(data);
+      } catch (err) {
+        console.error("[WS] bad JSON", err, e.data);
+      }
+    };
+
+    return socket;
+  }
+
+  // Initialize as GLOBAL
+  window.chatSocket = createSocket();
+
+  // ------- Action bar buttons -------
+  // Restart → WS control
+  document.getElementById("restart-btn")?.addEventListener("click", () => {
+    if (window.chatSocket && window.chatSocket.readyState === WebSocket.OPEN) {
+      window.chatSocket.send(JSON.stringify({ type: "control", cmd: "restart_game" }));
+    } else {
+      alert("Connection not open yet. Try again in a moment.");
+    }
+  });
+
+  // Start New Round → send TEXT "start new round"
+  startBtn?.addEventListener("click", () => {
+    if (!window.chatSocket || window.chatSocket.readyState !== WebSocket.OPEN) {
+      console.warn("[START ROUND] socket not open");
+      return;
+    }
+    window.chatSocket.send(JSON.stringify({ message: "start new round" }));
+    setStartRoundReady(false); // prevent double-clicks; server will re-enable when appropriate
+  });
+
+  // Optional keep-alive
+  setInterval(() => {
+    if (window.chatSocket && window.chatSocket.readyState === WebSocket.OPEN) {
+      window.chatSocket.send(JSON.stringify({ type: "ping" }));
+    }
+  }, 20000);
+
+  // ------- Chat send -------
+  document.getElementById('send').onclick = function () {
+    const field = document.getElementById('chat-message-input');
+    const msg = field.value.trim();
+    if (!msg) return;
+    if (window.chatSocket && window.chatSocket.readyState === WebSocket.OPEN) {
+      window.chatSocket.send(JSON.stringify({ message: msg }));
+    } else {
+      console.warn('[CHAT] socket not open');
+    }
+    field.value = '';
+  };
+
+  // Allow pressing Enter to send message
+  const input = document.getElementById('chat-message-input');
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // prevents newline in input
+      document.getElementById('send').click(); // triggers send button
+    }
+  });
+
+  // ------- Player stats -------
+  function updatePlayerStats(player) {
+    const stats = document.getElementById('player-stats');
+    stats.innerHTML = `
+      <div class="player-stat"><strong>Name:</strong> ${player.name}</div>
+      <div class="player-stat"><strong>Balance:</strong> $${player.balance}</div>
+      <div class="player-stat"><strong>Current Bet:</strong> ${player.currentbet}</div>
+      <div class="player-stat"><strong>Hand Score:</strong> ${player.handscore}</div>
+    `;
+  }
+
+  // ------- Card rendering helpers -------
+  const CARD_BASE = "{% static 'cards/' %}";
+  const RANK_MAP = {'ACE':'ace','KING':'king','QUEEN':'queen','JACK':'jack','TEN':'10','NINE':'9','EIGHT':'8','SEVEN':'7','SIX':'6','FIVE':'5','FOUR':'4','THREE':'3','TWO':'2'};
+  const SUIT_MAP = {'SPADE':'spades','SPADES':'spades','HEART':'hearts','HEARTS':'hearts','DIAMOND':'diamonds','DIAMONDS':'diamonds','CLUB':'clubs','CLUBS':'clubs'};
+  const SUIT_SYMBOL = { spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' };
+
+  function filenameFor(rankRaw, suitRaw) {
+    const rank = RANK_MAP[rankRaw.toUpperCase()];
+    const suit = SUIT_MAP[suitRaw.toUpperCase()];
+    return (rank && suit) ? `${rank}_of_${suit}.png` : null;
+  }
+  function prettyRank(rankRaw) {
+    const m = {'ACE':'Ace','KING':'King','QUEEN':'Queen','JACK':'Jack','TEN':'10','NINE':'9','EIGHT':'8','SEVEN':'7','SIX':'6','FIVE':'5','FOUR':'4','THREE':'3','TWO':'2'};
+    return m[rankRaw.toUpperCase()] || rankRaw;
+  }
+  function prettySuit(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function renderBoard(boardStr) {
+    const container = document.getElementById('board-display');
+    container.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'board-cards';
+    container.appendChild(wrap);
+
+    const parts = boardStr.split(',').map(s => s.trim());
+    for (const part of parts) {
+      const m = part.match(/^([\w]+)\s+of\s+([\w]+)$/i);
+      if (!m) continue;
+      const [, rankRaw, suitRaw] = m;
+
+      const fname = filenameFor(rankRaw, suitRaw);
+      if (!fname) continue;
+
+      const rankLabel = prettyRank(rankRaw);
+      const suitKey   = SUIT_MAP[suitRaw.toUpperCase()];
+      const suitNice  = prettySuit(suitKey);
+      const symbol    = SUIT_SYMBOL[suitKey];
+
+      const fig = document.createElement('figure');
+      fig.className = 'card';
+
+      const img = document.createElement('img');
+      img.src = CARD_BASE + fname;
+      img.alt = `${rankLabel} of ${suitNice}`;
+      img.className = 'card-img';
+      img.onerror = () => {
+        const span = document.createElement('span');
+        span.className = 'card-fallback';
+        span.textContent = `${rankLabel} of ${suitNice}`;
+        img.replaceWith(span);
+      };
+
+      const cap = document.createElement('figcaption');
+      cap.className = 'card-caption';
+      cap.textContent = `${rankLabel} of ${suitNice}${symbol ? ' ' + symbol : ''}`;
+
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      wrap.appendChild(fig);
+    }
+  }
+
+  function fnameFromPair([rankRaw, suitRaw]) {
+    const rank = RANK_MAP[String(rankRaw).toUpperCase()];
+    const suit = SUIT_MAP[String(suitRaw).toUpperCase()];
+    return (rank && suit) ? `${rank}_of_${suit}.png` : null;
+  }
+  const SUIT_PRETTY = { spades:'Spades', hearts:'Hearts', diamonds:'Diamonds', clubs:'Clubs' };
+  const SUIT_EMOJI  = { spades:'♠', hearts:'♥', diamonds:'♦', clubs:'♣' };
+  function prettyFromPair([rankRaw, suitRaw]) {
+    const r = RANK_MAP[String(rankRaw).toUpperCase()];
+    const s = SUIT_MAP[String(suitRaw).toUpperCase()];
+    const rankNice = {'ace':'Ace','king':'King','queen':'Queen','jack':'Jack','10':'10','9':'9','8':'8','7':'7','6':'6','5':'5','4':'4','3':'3','2':'2'}[r];
+    const suitNice = s ? SUIT_PRETTY[s] : '';
+    const sym = s ? SUIT_EMOJI[s] : '';
+    return `${rankNice} of ${suitNice}${sym ? ' ' + sym : ''}`.trim();
+  }
+  function renderHand(handPairs) {
+    const container = document.getElementById('hand-display');
+    container.innerHTML = '';
+    if (!Array.isArray(handPairs) || handPairs.length === 0) {
+      container.textContent = 'Hand: (waiting...)';
+      return;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'hand-cards';
+    container.appendChild(wrap);
+    for (const pair of handPairs) {
+      const fname = fnameFromPair(pair);
+      if (!fname) continue;
+
+      const fig = document.createElement('figure');
+      fig.className = 'card';
+
+      const img = document.createElement('img');
+      img.src = CARD_BASE + fname;
+      img.alt = prettyFromPair(pair);
+      img.className = 'card-img';
+      img.onerror = () => {
+        const fb = document.createElement('span');
+        fb.className = 'card-fallback';
+        fb.textContent = prettyFromPair(pair);
+        img.replaceWith(fb);
+      };
+
+      const cap = document.createElement('figcaption');
+      cap.className = 'card-caption';
+      cap.textContent = prettyFromPair(pair);
+
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      wrap.appendChild(fig);
+    }
+  }
+
+  // ------- Add Balance -------
+  function parseAmount(v) {
+    if (typeof v !== "string") v = String(v ?? "");
+    const m = v.trim().match(/^[$+]?(\d+(?:\.\d{1,2})?)$/);
+    return m ? parseFloat(m[1]) : NaN;
+  }
+
+  const addBtn = document.getElementById("add-btn");
+  if (addBtn) {
+    const addHandler = (e) => {
+      if (e && e.type === "touchend") e.preventDefault();
+
+      const field = document.getElementById("amount-input");
+      const raw = field ? field.value : "";
+      const amount = parseAmount(raw);
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Enter a valid positive number (e.g., 10 or 10.00).");
+        return;
+      }
+
+      if (window.chatSocket && window.chatSocket.readyState === WebSocket.OPEN) {
+        window.chatSocket.send(
+          JSON.stringify({
+            type: "add_balance",
+            target_user_id: userId,
+            amount: amount
+          })
+        );
+        console.log("[ADD] sent", amount, "for", userId);
+      } else {
+        console.warn("[ADD] socket not open");
+      }
+
+      if (field) field.value = "";
+    };
+
+    addBtn.addEventListener("click", addHandler, { passive: true });
+    addBtn.addEventListener("touchend", addHandler, { passive: false });
+  }
+
+  // ------- All-In button handler -------
+  const allInBtn = document.getElementById("all-in-btn");
+  if (allInBtn) {
+    allInBtn.addEventListener("click", () => {
+      if (window.chatSocket && window.chatSocket.readyState === WebSocket.OPEN) {
+        window.chatSocket.send(JSON.stringify({ message: "all-in" }));
+        // Optimistically disable; server will send turn_end anyway.
+        allInBtn.disabled = true;
+      } else {
+        console.warn("[ALL-IN] socket not open");
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

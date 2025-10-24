@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HomeGame • Access Gate</title>
+  <link rel="icon" href="{% static 'images/homegamelogo.png' %}">
+  <style>
+    :root {
+      --bg: #0d0d0d;         /* deep black */
+      --panel: #1a1a1a;      /* dark grey card */
+      --text: #f5f5f5;       /* white text */
+      --muted: #b0b0b0;      /* lighter grey */
+      --border: #2b2b2b;     /* subtle border */
+      --accent: #ffffff;     /* white highlights */
+      --error: #ff4d4d;      /* red error text */
+      --shadow: rgba(0,0,0,0.5);
+      --logo-bg: #e6e6e6;    /* light grey for logo */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      width: min(420px, 90%);
+      text-align: center;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+
+    .logo-box {
+      background: var(--logo-bg);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .logo {
+      width: 110px;
+      height: auto;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    p {
+      margin-bottom: 16px;
+    }
+
+    p.error {
+      color: var(--error);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    input[type="password"] {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #121212;
+      color: var(--text);
+      font-size: 1em;
+      text-align: center;
+    }
+
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+    }
+
+    button {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background: #e0e0e0;
+      transform: translateY(-1px);
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.85em;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="logo-box">
+      <img src="{% static 'images/homegamelogo.png' %}" alt="HomeGame Logo" class="logo" />
+    </div>
+    <h2>Enter Password</h2>
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% else %}
+      <p class="muted">Access restricted. Please enter the game password.</p>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Enter</button>
+    </form>
+    <div class="footer">
+      <p>Authorized players only.</p>
+    </div>
+  </main>
+</body>
+</html>
