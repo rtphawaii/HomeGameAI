@@ -937,3 +937,27 @@ pointer-events: none;
     margin-top: 8px;
   }
 }
+/* ===== Hand placement anchors (mobile) ===== */
+#hand-mobile-anchor {
+  display: block;
+  width: 100%;
+  max-width: 800px;       /* matches your board width */
+  margin: 12px auto 0;    /* center under the board */
+  min-height: 1px;        /* ensure it occupies space */
+}
+
+/* Ensure the hand actually sits INSIDE that anchor cleanly on mobile */
+@media (max-width: 768px) {
+  #hand-panel {
+    position: static !important;   /* ignore any absolute/fixed positioning */
+    float: none !important;        /* ignore floats, if any */
+    width: 100%;
+    max-width: 800px;
+    margin: 8px auto 16px;         /* space around the hand panel */
+    order: initial;                /* avoid flex/order surprises */
+  }
+
+  /* Optional: keep spacing consistent with board & strip */
+  #board-display { margin-bottom: 12px; }
+  .players-strip { margin-top: 12px; }
+}
