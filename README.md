@@ -91,6 +91,3 @@ Push to branch: git push origin feature/new-idea
 
 Submit a PR
 
-#📜 License
-
-MIT License © 2025 Ricky Pang
