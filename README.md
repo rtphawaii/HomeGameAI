@@ -1,9 +1,9 @@
-#HomeGameAI
+# HomeGameAI
 
 HomeGameAI is a real-time, multiplayer No-Limit Texas Hold’em Poker platform powered by Django Channels, WebSockets, and LLM-driven poker bots.
 It supports both human and AI players, runs seamlessly in the browser, and allows each player to interact with a live game environment hosted on a scalable backend.
 
-#🚀 Features
+## 🚀 Features
 
 🎮 Real-time gameplay — built on Django 5 + Channels (ASGI) with Daphne and WebSockets for synchronized multiplayer.
 
@@ -17,7 +17,7 @@ It supports both human and AI players, runs seamlessly in the browser, and allow
 
 🖥️ Production Ready — deployed on DigitalOcean using systemd, Nginx, and Gunicorn/Daphne with .env-based configuration.
 
-#🏗️ Tech Stack
+## 🏗️ Tech Stack
 Layer	Tools
 Backend	Django 5.x, Channels, Daphne, ASGI
 Frontend	HTML5, CSS3, Vanilla JS (WebSocket-driven)
@@ -25,7 +25,7 @@ AI Logic	Python (asyncio, httpx, pydantic, decimal), OpenRouter/OpenAI API
 Deployment	Nginx, systemd, DigitalOcean Ubuntu Droplet
 Data Handling	JSON state caching, custom logging for policy/meta/action events
 
-#🧠 LLM Poker Bot (Overview)
+## 🧠 LLM Poker Bot (Overview)
 
 The LLMPokerBot uses both rule-based heuristics and LLM inference to make real-time betting decisions:
 
@@ -41,7 +41,7 @@ Returns deterministic action outputs:
 
 { "action": "raise", "amount": "0.6" }
 
-#⚙️ Local Setup
+## ⚙️ Local Setup
 1️⃣ Clone and install dependencies
 git clone https://github.com/<yourusername>/HomeGameAI.git
 cd HomeGameAI/poker_site
@@ -66,7 +66,7 @@ python manage.py collectstatic --noinput
 4️⃣ Run server locally
 daphne -b 0.0.0.0 -p 8000 poker_site.asgi:application
 
-#🔍 Folder Structure
+## 🔍 Folder Structure
 HomeGameAI/
 ├── poker_site/
 │   ├── poker/
@@ -83,7 +83,7 @@ HomeGameAI/
 │   │   └── urls.py
 └── README.md
 
-#🧩 Roadmap
+## 🧩 Roadmap
 
  Integrate reinforcement learning and offline LLM fine-tuning
 
@@ -95,7 +95,7 @@ HomeGameAI/
 
  Support multiple tables and lobbies
 
-#🤝 Contributing
+## 🤝 Contributing
 
 Pull requests are welcome!
 Please open an issue first to discuss major changes.
