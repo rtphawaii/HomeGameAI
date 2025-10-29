@@ -3,6 +3,9 @@
 HomeGameAI is a real-time, multiplayer No-Limit Texas Hold’em Poker platform powered by Django Channels, WebSockets, and LLM-driven poker bots.
 It supports both human and AI players, runs seamlessly in the browser, and allows each player to interact with a live game environment hosted on a scalable backend.
 
+## Demo
+[![Watch the demo][(https:\/\/i.vimeocdn.com\/video\/2075926183-8b618710e7bb27b288d137ebb39d0832cf45502e0d9d91ab2b001d2ce27e64e9-d_295x166?region=us)](https://vimeo.com/1131859523?share=copy&fl=sv&fe=ci)
+
 ## 🚀 Features
 
 🎮 Real-time gameplay — built on Django 5 + Channels (ASGI) with Daphne and WebSockets for synchronized multiplayer.
