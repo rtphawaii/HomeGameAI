@@ -35,11 +35,9 @@ Evaluates game state context (pot odds, stack depth, position, board texture)
 
 Caches previous policy → action → meta decisions for reuse
 
-Queries fast LLMs (e.g. deepseek-chat, grok-4-fast) with structured JSON prompts
+Queries fast LLMs (e.g. deepseek, grok-4-fast) with structured JSON prompts
 
-Returns deterministic action outputs:
-
-{ "action": "raise", "amount": "0.6" }
+Returns deterministic action outputs
 
 ## ⚙️ Local Setup
 1️⃣ Clone and install dependencies
@@ -65,23 +63,6 @@ python manage.py collectstatic --noinput
 
 4️⃣ Run server locally
 daphne -b 0.0.0.0 -p 8000 poker_site.asgi:application
-
-## 🔍 Folder Structure
-HomeGameAI/
-├── poker_site/
-│   ├── poker/
-│   │   ├── bot_llm.py          # LLM Poker Bot logic
-│   │   ├── equity_mc.py        # Monte Carlo equity calculations
-│   │   ├── fold_range.py       # GTO-based fold range heuristics
-│   │   ├── HomeGame.py         # Core poker engine
-│   │   ├── consumers.py        # WebSocket consumers
-│   │   ├── templates/          # Frontend HTML/CSS
-│   │   └── static/             # JS, avatars, icons
-│   ├── poker_site/
-│   │   ├── settings.py
-│   │   ├── asgi.py
-│   │   └── urls.py
-└── README.md
 
 ## 🧩 Roadmap
 
