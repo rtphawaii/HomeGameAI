@@ -77,8 +77,6 @@ daphne -b 0.0.0.0 -p 8000 poker_site.asgi:application
 
  Introduce leaderboard and bankroll tracking
 
- Support multiple tables and lobbies
-
 ## 🤝 Contributing
 
 Pull requests are welcome!
