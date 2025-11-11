@@ -6,6 +6,10 @@ It supports both human and AI players, runs seamlessly in the browser, and allow
 ## Demo & Gameplay
 https://vimeo.com/1131859523
 
+[Lobby Screen](https://i.imgur.com/PfiQJZD.png)
+
+[Gameplay](https://i.imgur.com/aZjJkV8.png)
+
 ## 🚀 Features
 
 🎮 Real-time gameplay — built on Django 5 + Channels (ASGI) with Daphne and WebSockets for synchronized multiplayer.
