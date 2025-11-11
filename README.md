@@ -79,8 +79,6 @@ daphne -b 0.0.0.0 -p 8000 poker_site.asgi:application
 
  Integrate reinforcement learning and offline LLM fine-tuning
 
- Add in-browser game replays and summaries
-
  Expand caching for post-flop decision reuse
 
  Introduce leaderboard and bankroll tracking
