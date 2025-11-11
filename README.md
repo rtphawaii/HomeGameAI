@@ -6,9 +6,9 @@ It supports both human and AI players, runs seamlessly in the browser, and allow
 ## Demo & Gameplay
 https://vimeo.com/1131859523
 
-[Lobby Screen](https://i.imgur.com/PfiQJZD.png)
+![Lobby Screen](https://i.imgur.com/PfiQJZD.png)
 
-[Gameplay](https://i.imgur.com/aZjJkV8.png)
+![Gameplay](https://i.imgur.com/aZjJkV8.png)
 
 ## 🚀 Features
 
